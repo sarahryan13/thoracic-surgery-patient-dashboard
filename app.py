@@ -1,8 +1,6 @@
 import base64
 import io
 import pickle
-import qgrid
-import ipywidgets
 
 from flask import Flask, render_template, request, redirect, url_for
 import pandas as pd
