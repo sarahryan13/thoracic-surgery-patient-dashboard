@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 
 <head>
 
@@ -15,7 +15,16 @@
 
   <!-- Custom styles for this template -->
   <link href="/static/css/scrolling-nav.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
 
+    <!-- Source for the DataTable -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+        $('#example').DataTable();
+        });
+    </script>
 </head>
 
 <body id="page-top">
@@ -46,8 +55,8 @@
   <header class="bg-primary text-white">
     <div class="container text-center">
       <h1><br/>Thoracic Surgery Patient Outcome</h1>
-      <p class="lead"><br>This dashboard visualizes data on postoperative thoracic surgery patients.
-          By utilizing machine learning to determine patterns in the data, this dashboard can be used
+      <p class="lead"><br>This application provides a dashboard for analyzing data on postoperative thoracic surgery patients.
+          By utilizing machine learning to determine patterns in the data, the dashboard can also be used
           to predict the outcome of a patient 1 year post surgery.</p>
     </div>
   </header>
@@ -154,16 +163,20 @@
       <div class="row">
         <div class="col-lg-10 mx-auto">
           <h2>Data Visualization</h2>
-          <p class="lead"><br>This histogram shows the age distribution of all patients in the thoracic surgery dataset.</p>
+            <p class="lead" style="font-size:25px"><br>Age Distribution of Patients:</p>
+            <p class="lead">This histogram shows the age distribution of all patients in the thoracic surgery dataset.</p>
             {{ age_plot }}
-            <p class="lead"><br>This KDE plot shows what tumor sizes are the most prevalent in the dataset.
+            <p class="lead" style="font-size:25px"><br>Patient Outcome by Tumor Size:</p>
+            <p class="lead">This KDE plot shows what tumor sizes are the most prevalent in the dataset.
                 <br>From this plot, we can derive which tumor size has the highest risk of a negative outcome 1 year post surgery.
                 <br>[1=OC11, 2=OC12, 3=OC13, 4=OC14]</p>
             {{ tnm_plot }}
-            <p class="lead"><br>This heatmap shows the correlation between all of the features in the dataset.
+            <p class="lead" style="font-size:25px"><br>Feature Correlation Heatmap:</p>
+            <p class="lead">This heatmap shows the correlation between all of the features in the dataset.
             <br>The "Target" feature represents patient outcome.</p>
             {{ heatmap }}
-
+            <p class="lead" style="font-size:25px"><br>Patient Dataset:</p>
+            {{ data | safe }}
         </div>
       </div>
     </div>
@@ -233,6 +246,8 @@
 
   <!-- Plugin JavaScript -->
   <script src="/static/vendor/jquery-easing/jquery.easing.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 
   <!-- Custom JavaScript for this theme -->
   <script src="/static/js/scrolling-nav.js"></script>

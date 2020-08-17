@@ -1,6 +1,8 @@
 import base64
 import io
 import pickle
+import qgrid
+import ipywidgets
 
 from flask import Flask, render_template, request, redirect, url_for
 import pandas as pd
@@ -60,12 +62,15 @@ def generate_dashboard():
         heatmap_url = get_encoded_heatmap(patient_df)
         heatmap = Markup('<img src="data:image/png;base64,{}" width: 360px, height: 288px>'.format(heatmap_url))
 
+    nice_df = patient_df.drop(columns=['FEV', 'PerfStat', 'Cough', 'MI', 'Asthma', 'Age'])
+
     # Displays the index page with the data visualizations when website is loaded
     if request.method == 'GET':
         return render_template('index.html',
                                age_plot=age_plot,
                                tnm_plot=tnm_plot,
-                               heatmap=heatmap)
+                               heatmap=heatmap,
+                               data=nice_df.to_html(table_id="example"))
 
     # Collects user input data, makes prediction and returns result of prediction
     if request.method == 'POST':
@@ -136,7 +141,8 @@ def generate_dashboard():
                                heatmap=heatmap,
                                result=formatted_prediction,
                                classification=classification,
-                               avg_accuracy=avg_accuracy)
+                               avg_accuracy=avg_accuracy,
+                               data=nice_df.to_html(table_id="example"))
 
 
 @app.route('/')
