@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Sarah Ryan">
+
+  <title>Spruce Cancer Clinic</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="/static/css/scrolling-nav.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand js-scroll-trigger" href="#page-top">Spruce Cancer Clinic</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#prediction">Patient Prediction</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#dashboard">Data Visualization</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="#about">Dataset Information</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header class="bg-primary text-white">
+    <div class="container text-center">
+      <h1><br/>Thoracic Surgery Patient Outcome</h1>
+      <p class="lead"><br>This dashboard visualizes data on postoperative thoracic surgery patients.
+          By utilizing machine learning to determine patterns in the data, this dashboard can be used
+          to predict the outcome of a patient 1 year post surgery.</p>
+    </div>
+  </header>
+
+  <section id="prediction">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 mx-auto">
+          <h2>Predict Patient Outcome</h2>
+          <p class="lead">Enter the patient information and then click 'Predict'.</p>
+            <form action="{{ url_for('generate_dashboard') }}" method="POST">
+                <label for="Diagnosis">Diagnosis:</label>
+                <select id="Diagnosis" name="Diagnosis" required>
+                    <option value="0">DGN1</option>
+                    <option value="1">DGN2</option>
+                    <option value="2">DGN3</option>
+                    <option value="3">DGN4</option>
+                    <option value="4">DGN5</option>
+                    <option value="5">DGN6</option>
+                    <option value="6">DGN8</option>
+                </select>
+                <br>
+                <label for="FVC">Forced Vital Capacity [0.00 - 10.00]:</label>
+                <input type="number" id="FVC" name="FVC" min=0.00 max=10.00 value=0.00 required>
+                <br>
+                <label for="Pain">Pain before surgery:</label>
+                <input type="radio" id="yes" name="Pain" value=1 checked>
+                <label for=1>Yes</label>
+                <input type="radio" id="no" name="Pain" value=0>
+                <label for=0>No</label>
+                <br>
+                <label for="Hae">Haemoptysis before surgery:</label>
+                <input type="radio" id="yes" name="Hae" value=1 checked>
+                <label for=1>Yes</label>
+                <input type="radio" id="no" name="Hae" value=0>
+                <label for=0>No</label>
+                <br>
+                <label for="Dys">Dyspnoea before surgery:</label>
+                <input type="radio" id="yes" name="Dys" value=1 checked>
+                <label for=1>Yes</label>
+                <input type="radio" id="no" name="Dys" value=0>
+                <label for=0>No</label>
+                <br>
+                <label for="Weak">Weakness before surgery:</label>
+                <input type="radio" id="yes" name="Weak" value=1 checked>
+                <label for=1>Yes</label>
+                <input type="radio" id="no" name="Weak" value=0>
+                <label for=0>No</label>
+                <br>
+                <label for="TNM">Size of original tumor:</label>
+                <select id="TNM" name="TNM" required>
+                    <option value="0">OC11</option>
+                    <option value="1">OC12</option>
+                    <option value="2">OC13</option>
+                    <option value="3">OC14</option>
+                </select>
+                <br>
+                <label for="T2Diab">Type 2 diabetes:</label>
+                <input type="radio" id="yes" name="T2Diab" value=1 checked>
+                <label for=1>Yes</label>
+                <input type="radio" id="no" name="T2Diab" value=0>
+                <label for=0>No</label>
+                <br>
+                <label for="PAD">Peripheral arterial diseases:</label>
+                <input type="radio" id="yes" name="PAD" value=1 checked>
+                <label for=1>Yes</label>
+                <input type="radio" id="no" name="PAD" value=0>
+                <label for=0>No</label>
+                <br>
+                <label for="Smoker">Smoker:</label>
+                <input type="radio" id="yes" name="Smoker" value=1 checked>
+                <label for=1>Yes</label>
+                <input type="radio" id="no" name="Smoker" value=0>
+                <label for=0>No</label>
+                <br>
+                <input type="submit" value="Predict">
+            </form>
+            <div class="result">
+                {% if scroll %}
+                    <script>
+                        document.getElementById('{{ scroll }}').scrollIntoView();
+                    </script>
+                {% endif %}
+                {% if result %}
+                    <br>
+                        <p style="font-size:30px">{{ classification }}</p>
+                        <p style="font-size:25px">Probability of survival: {{ result }}%
+                            <br>Prediction accuracy: {{ avg_accuracy }}%</p>
+                    <p style="font-size:15px">Patient input:
+                    {% for variable, value in original_input.items() %}
+                        <b>{{ variable }}</b>: {{ value }}
+                    {% endfor %}</p>
+                    <br>
+                    <br>
+                {% endif %}
+            </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="dashboard" class="bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 mx-auto">
+          <h2>Data Visualization</h2>
+          <p class="lead"><br>This histogram shows the age distribution of all patients in the thoracic surgery dataset.</p>
+            {{ age_plot }}
+            <p class="lead"><br>This KDE plot shows what tumor sizes are the most prevalent in the dataset.
+                <br>From this plot, we can derive which tumor size has the highest risk of a negative outcome 1 year post surgery.
+                <br>[1=OC11, 2=OC12, 3=OC13, 4=OC14]</p>
+            {{ tnm_plot }}
+            <p class="lead"><br>This heatmap shows the correlation between all of the features in the dataset.
+            <br>The "Target" feature represents patient outcome.</p>
+            {{ heatmap }}
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="container">
+      <div class="row">
+        <p class="col-lg-10 mx-auto">
+          <h2>About the Dataset</h2>
+          <p class="lead"><br/>UCI Thoracic Surgery Dataset:
+              <a href="https://archive.ics.uci.edu/ml/datasets/Thoracic+Surgery+Data" target="_blank">
+                  https://archive.ics.uci.edu/ml/datasets/Thoracic+Surgery+Data
+              </a>
+              <br/><br/><i>The data was collected retrospectively at Wroclaw Thoracic Surgery Centre for
+              patients who underwent major lung resections for primary lung cancer in the years 2007-2011.
+              The Centre is associated with the Department of Thoracic Surgery of the Medical University of
+              Wroclaw and Lower-Silesian Centre for Pulmonary Diseases, Poland, while the research database
+              constitutes a part of the National Lung Cancer Registry, administered by the Institute of
+              Tuberculosis and Pulmonary Diseases in Warsaw, Poland.</i>
+
+            <br/><br/>Source: <br/><i>Marek Lubicz (Wroclaw University of Technology, wybrzeze Wyspianskiego 27, 50-370,
+              Wroclaw, Poland), Konrad Pawelczyk, Adam Rzechonek, Jerzy Kolodziej (Wroclaw Medical University, wybrzeze
+          L. Pasteura 1, 50-367 Wroclaw, Poland). November, 2013.</i>
+
+            <br/><br/>Donors: <br/><i>Maciej Zieba (maciej.zieba@pwr.wroc.pl),
+              Jakub M. Tomczak (jakub.tomczak@pwr.wroc.pl),
+                  (+48) 71 320 44 53.</i>
+
+            <br/><br/>Data Dictionary:
+            <ol>
+                <li><b>Diagnosis:</b> ICD-10 codes for primary and secondary as well multiple tumours if any (DGN3,DGN2,DGN4,DGN6,DGN5,DGN8,DGN1).</li>
+                <li><b>FVC:</b> Forced vital capacity.</li>
+                <li><b>FEV:</b> Volume that has been exhaled at the end of the first second of forced expiration.</li>
+                <li><b>PerfStat:</b> Performance status - Zubrod scale (PRZ2,PRZ1,PRZ0).</li>
+                <li><b>Pain:</b> Pain before surgery (T,F).</li>
+                <li><b>Hae:</b> Haemoptysis before surgery (T,F).</li>
+                <li><b>Dys:</b> Dyspnoea before surgery (T,F).</li>
+                <li><b>Cough:</b> Cough before surgery (T,F).</li>
+                <li><b>Weak:</b> Weakness before surgery (T,F).</li>
+                <li><b>TNM:</b> Size of the original tumour, from OC11 (smallest) to OC14 (largest) (OC11,OC14,OC12,OC13).</li>
+                <li><b>T2Diab:</b> Type 2 DM - diabetes mellitus (T,F).</li>
+                <li><b>MI:</b> MI up to 6 months (T,F).</li>
+                <li><b>PAD:</b> Peripheral arterial diseases (T,F).</li>
+                <li><b>Smoker:</b> Smoking (T,F).</li>
+                <li><b>Asthma:</b> Asthma (T,F).</li>
+                <li><b>Age:</b> Age at surgery.</li>
+                <li><b>Target:</b> 1 year survival period - True value if died (T,F).</li>
+          </ol>
+        </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Spruce Cancer Clinic 2020</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="/static/vendor/jquery/jquery.min.js"></script>
+  <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="/static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom JavaScript for this theme -->
+  <script src="/static/js/scrolling-nav.js"></script>
+
+</body>
+
+</html>
